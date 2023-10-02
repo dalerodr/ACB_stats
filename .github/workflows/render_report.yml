@@ -1,0 +1,47 @@
+name: Github Actions
+
+on: push
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - name: Instalar R
+      uses: r-lib/actions/setup-r@v2
+    
+    - name: Install libcurl
+      run: >
+        sudo apt-get update && sudo apt-get install --yes
+        libcurl4-openssl-dev
+
+    - name: Install R packages
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install r-base -y
+        sudo apt-get install -y pandoc pandoc-citeproc -y
+        R -e "install.packages(c('rmarkdown', 'flexdashboard', 'readr', 'tidyr', 'dplyr', 'DT', 'ggplot2', 'ggrepel'))"
+
+    - id: 'auth_GCP'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    # Run gcloud commands, run Rmarkdown & Auto update report.
+    - id: 'gcloud_R_aur'
+      name: 'gcloud commands, run rmarkdown and aur'
+      run: |-
+        bq query --max_rows=1000000 --format=csv --nouse_legacy_sql "SELECT * FROM ${{ secrets.MY_PROJECT }}.${{ secrets.MY_DATASET }}.${{ secrets.MY_TABLE }} WHERE minutes > 0 LIMIT 10500" > data.csv
+        R -e "rmarkdown::render('index.Rmd', output_dir = 'docs/')"
+        git config --local user.name "$GITHUB_ACTOR"
+        git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        git add docs/index.html
+        git commit -m "Auto update Report"
+        git push origin

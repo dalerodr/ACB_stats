@@ -1,0 +1,47 @@
+name: Github Actions
+
+on: push
+
+jobs: 
+  autoscrape:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Load repo and install R
+    steps:
+    - uses: 'actions/checkout@v3'
+    
+    # - name: Instalar R
+    #   uses: r-lib/actions/setup-r@v2
+
+    # # Set-up R
+    # - name: Install packages
+    #   run: |
+    #     R -e "install.packages(c('tidyverse', 'Rcrawler', 'plyr'))"
+    # # Run R script
+    # - name: Scrape
+    #   run: Rscript data_acb_season.R
+
+    # Run GitHub commands
+    # - id: 'GitHub_commands'
+    #   name: 'GitHub commands'
+    #   run: |-
+    #     git config --local user.name "$GITHUB_ACTOR"
+    #     git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+    #     git add data/results_match_id.csv
+    #     git commit -m "Scrap ACB results"
+    #     git push origin
+
+    - id: 'auth_GCP'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: Load CSV to BigQuery
+      run: |-
+        bq load --source_format=CSV --autodetect --replace "${{ secrets.MY_PROJECT }}:${{ secrets.SOURCE_DATASET }}.results_season_match_id" "data/results_season_match_id.csv"

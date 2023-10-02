@@ -1,0 +1,147 @@
+---
+title: "ACB"
+output: 
+  flexdashboard::flex_dashboard:
+    theme:
+      version: 4
+      bg: "#FEFEFE"
+      fg: "#1c0d02"
+      primary:   "#452674"
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+      code_font:
+        google: 
+          # arguments to sass::font_google() 
+          family: JetBrains Mono
+          local: false
+    navbar:
+        - { title: "Daniel Alejo Rodríguez", align: right}
+        - { icon: "fa-brands fa-dochub",align: right}
+    orientation: columns
+    vertical_layout: fill
+---
+
+<style>
+.navbar-brand {
+color:gold!important;
+}
+</style>
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+# library(bigrquery)
+library(readr)
+library(tidyr)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(ggrepel)
+
+```
+
+# TEAM STATS <i class="fa-solid fa-users-line"></i>
+## Column {data-width="750"}
+### Stats table
+
+```{r}
+# Querying ----------------------------------------------------------------
+# project <- Sys.getenv("MY_PROJECT")
+# dataset <- Sys.getenv("MY_DATASET")
+# table <- Sys.getenv("MY_TABLE")
+
+query_results <- readr::read_delim("data.csv", delim = ",", locale = readr::locale(encoding = "UTF-8"))        # ISO-8859-1, latin1
+query_results <- query_results[7:dim(query_results)[1], ]
+query_results <- tidyr::separate(query_results, col = 1, into = c("dorsal_number", "lineup", "name", "minutes", "points", "t2_made", "t2_attempted", "t2_percent", "t3_made", "t3_attempted", "t3_percent", "t1_made", "t1_attempted", "t1_percent", "rebounds", "defensive_rebounds", "ofensive_rebounds", "assists", "steals", "turnovers", "fast_breaks", "defensive_blocks", "blocks_received", "dunks", "personal_fouls", "fouls_received", "plus_minus", "player_efficiency_rating", "gameday", "home_away", "game_id", "Local_Team", "Visit_Team", "Local_Score", "Visit_Score"), sep = ",")
+
+query_results <- query_results %>% 
+                    mutate(
+                      dorsal_number = as.double(dorsal_number),
+                      lineup = as.character(lineup),
+                      name = as.character(name),
+                      minutes = as.double(minutes),
+                      points = as.double(points),
+                      t2_made = as.double(t2_made),
+                      t2_attempted = as.double(t2_attempted),
+                      t2_percent = as.double(t2_percent),
+                      t3_made = as.double(t3_made),
+                      t3_attempted = as.double(t3_attempted),
+                      t3_percent = as.double(t3_percent),
+                      t1_made = as.double(t1_made),
+                      t1_attempted = as.double(t1_attempted),
+                      t1_percent = as.double(t1_percent),
+                      rebounds = as.double(rebounds),
+                      defensive_rebounds = as.double(defensive_rebounds),
+                      ofensive_rebounds = as.double(ofensive_rebounds),
+                      assists = as.double(assists),
+                      steals = as.double(steals),
+                      turnovers = as.double(turnovers),
+                      fast_breaks = as.double(fast_breaks),
+                      defensive_blocks = as.double(defensive_blocks),
+                      blocks_received = as.double(blocks_received),
+                      dunks = as.double(dunks),
+                      personal_fouls = as.double(personal_fouls),
+                      fouls_received = as.double(fouls_received),
+                      plus_minus = as.double(plus_minus),
+                      player_efficiency_rating = as.double(player_efficiency_rating),
+                      gameday = as.double(gameday),
+                      home_away = as.character(home_away),
+                      game_id = as.double(game_id),
+                      Local_Team = as.character(Local_Team),
+                      Visit_Team = as.character(Visit_Team),
+                      Local_Score = as.double(Local_Score),
+                      Visit_Score = as.double(Visit_Score)
+                    )
+
+datatable(query_results,
+          extensions = 'FixedColumns',
+          options = list(
+            dom = 't',
+            scrollX = TRUE,
+            pageLength = 250,
+            fixedHeader = TRUE,
+            fixedColumns = list(leftColumns = 4)
+            )
+          )
+```
+
+## {.tabset .tabset-fade}
+### Graphic by Local team
+```{r}
+query_results %>%
+  group_by(Local_Team) %>%
+  summarise(Team_points = sum(points),
+            Team_assists = sum(assists)) %>% 
+ggplot(data = ., aes(x = Team_assists, y = Team_points, label = Local_Team)) +
+  geom_point() +
+  labs(title = "", x = "Team assists", y = "Team points") +
+  geom_text_repel(min.segment.length = 0, seed = 42, box.padding = 0.5)
+```
+
+### Graphic by Visit team
+```{r}
+query_results %>%
+  group_by(Visit_Team) %>%
+  summarise(Team_points = sum(points),
+            Team_assists = sum(assists)) %>% 
+ggplot(data = ., aes(x = Team_assists, y = Team_points, label = Visit_Team)) +
+  geom_point() +
+  labs(title = "", x = "Team assists", y = "Team points") +
+  geom_text_repel(min.segment.length = 0, seed = 42, box.padding = 0.5)
+```
+
+
+# PLAYER STATS <i class="fa-solid fa-basketball"></i>
+## Column {data-width="100%"}
+
+<iframe width="100%" height="100%" src="https://lookerstudio.google.com/embed/reporting/e25cc0db-e5f5-44e6-9096-f2688cceee4a/page/kUVYD" frameborder="0" style="border:0" allowfullscreen></iframe>
+
+
+# PLAYERS PLAYED TOGETHER <i class="fa-solid fa-arrows-down-to-people"></i>
+## Column {data-width="100%"}
+### Stats table
+
+```{r}
+
+```

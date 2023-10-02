@@ -1,0 +1,22 @@
+# Archivos y directorios generados por R
+.RData
+.Rhistory
+.Rproj.user/
+.Ruserdata
+
+# Directorios generados por RStudio
+.Rproj.user/
+.Rproj*
+
+# Archivos generados por RStudio
+*.Rproj
+*.Rproj.user
+*.Rhistory
+*.RData
+
+# Directorio `renv` utilizado por el paquete renv para gestionar entornos virtuales
+renv/
+
+# Archivos con extensión .json
+# *.json
+
