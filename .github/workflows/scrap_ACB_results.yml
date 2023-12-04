@@ -42,6 +42,10 @@ jobs:
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
 
-    - name: Load CSV to BigQuery
-      run: |-
+    - name: Load CSV season_match_id to BigQuery
+      run: |
         bq load --source_format=CSV --autodetect --replace "${{ secrets.MY_PROJECT }}:${{ secrets.SOURCE_DATASET }}.results_season_match_id" "data/results_season_match_id.csv"
+
+    - name: Run Google workflow
+      run: |
+        gcloud workflows run ${{ secrets.WORKFLOW }} --project=${{ secrets.MY_PROJECT }} --location=${{ secrets.LOCATION }}
