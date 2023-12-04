@@ -28,7 +28,7 @@ jobs:
       run: |-
         git config --local user.name "$GITHUB_ACTOR"
         git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git add data/results_match_id.csv
+        git add data/results_season_match_id.csv
         git commit -m "Scrap ACB results"
         git push origin
 
