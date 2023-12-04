@@ -22,7 +22,7 @@ jobs:
     - name: Scrape
       run: Rscript data_acb_season.R
 
-    Run GitHub commands
+    # Run GitHub commands
     - id: 'GitHub_commands'
       name: 'GitHub commands'
       run: |-
