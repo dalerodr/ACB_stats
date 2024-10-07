@@ -30,8 +30,8 @@ if(month(Sys.time()) <= 8){
 }else{
   anyo <- year(Sys.time())
 }
-season      <- seq(2022, anyo, 1)
-match_day   <- seq(1, 13, 1)
+season      <- seq(2023, 2023, 1)     # anyo
+match_day   <- seq(1, 45, 1)
 # season      <- seq(anyo, anyo, 1)
 # match_day   <- seq(max_gameday, 50, 1)
 game_ids    <- list()
