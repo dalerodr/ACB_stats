@@ -20,3 +20,6 @@ renv/
 # Archivos con extensión .json
 # *.json
 
+# Otros archivos
+team_stats_avg.csv
+players_played_together.csv

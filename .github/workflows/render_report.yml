@@ -38,7 +38,7 @@ jobs:
     - id: 'gcloud_R_aur'
       name: 'gcloud commands, run rmarkdown and aur'
       run: |-
-        bq query --max_rows=1000000 --format=csv --nouse_legacy_sql "SELECT * FROM ${{ secrets.MY_PROJECT }}.${{ secrets.MY_DATASET }}.${{ secrets.MY_TABLE }} WHERE minutes > 0 LIMIT 10500" > data.csv
+        bq query --max_rows=1000000 --format=csv --nouse_legacy_sql "SELECT * FROM ${{ secrets.MY_PROJECT }}.${{ secrets.MY_DATASET }}.${{ secrets.MY_TABLE }} WHERE team != ''" > data.csv
         R -e "rmarkdown::render('index.Rmd', output_dir = 'docs/')"
         git config --local user.name "$GITHUB_ACTOR"
         git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
